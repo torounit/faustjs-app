@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param mixed $default Optional setting value.
  */
 add_filter( 'wpe_headless_get_setting', function ( $value, $name ) {
-	if ( $name === 'secret_key' && defined( 'WP_HEADLESS_SECRET' ) ) {
+	if ( 'secret_key' === $name && defined( 'WP_HEADLESS_SECRET' ) ) {
 		return WP_HEADLESS_SECRET;
 	}
 
@@ -25,6 +25,7 @@ add_filter( 'wpe_headless_get_setting', function ( $value, $name ) {
 }, 10, 2 );
 
 add_filter( 'option_graphql_general_settings', function ( $settings ) {
+
 	if ( ! $settings ) {
 		$settings = array (
 			'graphql_endpoint' => 'graphql',
