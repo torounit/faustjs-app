@@ -1,0 +1,17 @@
+{
+	"core": null,
+	"port": 4000,
+	"testsPort": 4001,
+	"plugins": [
+		"https://downloads.wordpress.org/plugin/wp-graphql.zip",
+		"./wpe-headless"
+	],
+	"mappings": {
+		"wp-content/mu-plugins": "./mu-plugins"
+	},
+	"config": {
+		"PERMALINK_STRUCTURE": "/posts/%postname%",
+		"FRONTEND_URI": "http://localhost:3000",
+		"WP_HEADLESS_SECRET": "your-key"
+	}
+}
