@@ -9,7 +9,11 @@
     "clean": "rimraf .next node_modules",
     "lint": "next lint",
     "generate": "gqty generate",
-    "wpe-build": "next build"
+    "wpe-build": "next build",
+    "wp-env": "wp-env",
+    "download-plugins": "(wget -q https://wp-product-info.wpesvc.net/v1/plugins/wpe-headless?download -O wpe-headless.zip || curl -L -o wpe-headless.zip https://wp-product-info.wpesvc.net/v1/plugins/wpe-headless?download) && unzip -o wpe-headless.zip && rm wpe-headless.zip",
+    "wp-env:start": "npm run download-plugins && wp-env start --update",
+    "postinstall": "npm run download-plugins"
   },
   "dependencies": {
     "@faustjs/core": "^0.10.2",
@@ -23,6 +27,7 @@
   "devDependencies": {
     "@gqty/cli": "^1.1.4",
     "@types/react": "^17.0.20",
+    "@wordpress/env": "^4.1.1",
     "dotenv": "^10.0.0",
     "eslint": "^7.32.0",
     "eslint-config-next": "^11.1.2",
