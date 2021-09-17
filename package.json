@@ -11,7 +11,9 @@
     "generate": "gqty generate",
     "wpe-build": "next build",
     "wp-env": "wp-env",
-    "download-plugins": "(wget -q https://wp-product-info.wpesvc.net/v1/plugins/wpe-headless?download -O wpe-headless.zip || curl -L -o wpe-headless.zip https://wp-product-info.wpesvc.net/v1/plugins/wpe-headless?download) && unzip -o wpe-headless.zip && rm wpe-headless.zip",
+    "download-wpe-headless": "cd plugins && (wget -q https://wp-product-info.wpesvc.net/v1/plugins/wpe-headless?download -O wpe-headless.zip || curl -L -o wpe-headless.zip https://wp-product-info.wpesvc.net/v1/plugins/wpe-headless?download) && unzip -o wpe-headless.zip && rm wpe-headless.zip",
+    "download-atlas-content-modeler": "cd plugins && (wget -q https://wp-product-info.wpesvc.net/v1/plugins/atlas-content-modeler?download -O atlas-content-modeler.zip || curl -L -o atlas-content-modeler.zip https://wp-product-info.wpesvc.net/v1/plugins/atlas-content-modeler?download) && unzip -o atlas-content-modeler.zip && rm atlas-content-modeler.zip",
+    "download-plugins": "npm run download-wpe-headless && npm run download-atlas-content-modeler",
     "wp-env:create": "npm run download-plugins && wp-env start --update && wp-env run cli wp rewrite flush"
   },
   "dependencies": {

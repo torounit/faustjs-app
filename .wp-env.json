@@ -4,7 +4,8 @@
 	"testsPort": 4001,
 	"plugins": [
 		"https://downloads.wordpress.org/plugin/wp-graphql.zip",
-		"./wpe-headless"
+		"./plugins/wpe-headless",
+		"./plugins/atlas-content-modeler"
 	],
 	"mappings": {
 		"wp-content/mu-plugins": "./mu-plugins"
