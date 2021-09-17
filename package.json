@@ -12,8 +12,7 @@
     "wpe-build": "next build",
     "wp-env": "wp-env",
     "download-plugins": "(wget -q https://wp-product-info.wpesvc.net/v1/plugins/wpe-headless?download -O wpe-headless.zip || curl -L -o wpe-headless.zip https://wp-product-info.wpesvc.net/v1/plugins/wpe-headless?download) && unzip -o wpe-headless.zip && rm wpe-headless.zip",
-    "wp-env:create": "npm run download-plugins && wp-env start --update && wp-env run cli wp rewrite flush",
-    "postinstall": "npm run download-plugins"
+    "wp-env:create": "npm run download-plugins && wp-env start --update && wp-env run cli wp rewrite flush"
   },
   "dependencies": {
     "@faustjs/core": "^0.10.2",
