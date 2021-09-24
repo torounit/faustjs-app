@@ -15,6 +15,13 @@ add_action('init', function () {
         'hierarchical' => false,
         'graphql_single_name' => 'book',
         'graphql_plural_name' => 'books',
-        'supports' => array('title', 'editor', 'author', 'thumbnail', 'excerpt')
+        'supports' => array('title', 'editor', 'author', 'thumbnail', 'excerpt','revisions')
     ]);
 });
+
+add_filter('preview_post_link', function ($link, WP_Post $post) {
+    if (in_array($post->post_type, array('post', 'page', 'attachment'))) {
+        return $link;
+    }
+    return add_query_arg('post_type', $post->post_type, $link);
+}, 10, 2);

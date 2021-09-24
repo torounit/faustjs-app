@@ -1863,6 +1863,52 @@ export interface UserToContentRevisionUnionConnectionWhereArgs {
   title?: Maybe<Scalars["String"]>;
 }
 
+/** Arguments for filtering the bookToRevisionConnection connection */
+export interface BookToRevisionConnectionWhereArgs {
+  /** The user that's connected as the author of the object. Use the userId for the author object. */
+  author?: Maybe<Scalars["Int"]>;
+  /** Find objects connected to author(s) in the array of author's userIds */
+  authorIn?: Maybe<Array<Maybe<Scalars["ID"]>>>;
+  /** Find objects connected to the author by the author's nicename */
+  authorName?: Maybe<Scalars["String"]>;
+  /** Find objects NOT connected to author(s) in the array of author's userIds */
+  authorNotIn?: Maybe<Array<Maybe<Scalars["ID"]>>>;
+  /** Filter the connection based on dates */
+  dateQuery?: Maybe<DateQueryInput>;
+  /** True for objects with passwords; False for objects without passwords; null for all objects with or without passwords */
+  hasPassword?: Maybe<Scalars["Boolean"]>;
+  /** Specific ID of the object */
+  id?: Maybe<Scalars["Int"]>;
+  /** Array of IDs for the objects to retrieve */
+  in?: Maybe<Array<Maybe<Scalars["ID"]>>>;
+  /** Get objects with a specific mimeType property */
+  mimeType?: Maybe<MimeTypeEnum>;
+  /** Slug / post_name of the object */
+  name?: Maybe<Scalars["String"]>;
+  /** Specify objects to retrieve. Use slugs */
+  nameIn?: Maybe<Array<Maybe<Scalars["String"]>>>;
+  /** Specify IDs NOT to retrieve. If this is used in the same query as "in", it will be ignored */
+  notIn?: Maybe<Array<Maybe<Scalars["ID"]>>>;
+  /** What paramater to use to order the objects by. */
+  orderby?: Maybe<Array<Maybe<PostObjectsConnectionOrderbyInput>>>;
+  /** Use ID to return only children. Use 0 to return only top-level items */
+  parent?: Maybe<Scalars["ID"]>;
+  /** Specify objects whose parent is in an array */
+  parentIn?: Maybe<Array<Maybe<Scalars["ID"]>>>;
+  /** Specify posts whose parent is not in an array */
+  parentNotIn?: Maybe<Array<Maybe<Scalars["ID"]>>>;
+  /** Show posts with a specific password. */
+  password?: Maybe<Scalars["String"]>;
+  /** Show Posts based on a keyword search */
+  search?: Maybe<Scalars["String"]>;
+  /** Retrieve posts where post status is in an array. */
+  stati?: Maybe<Array<Maybe<PostStatusEnum>>>;
+  /** Show posts with a specific status. */
+  status?: Maybe<PostStatusEnum>;
+  /** Title of the object */
+  title?: Maybe<Scalars["String"]>;
+}
+
 /** Arguments for filtering the RootQueryToBookConnection connection */
 export interface RootQueryToBookConnectionWhereArgs {
   /** The user that's connected as the author of the object. Use the userId for the author object. */
@@ -4054,6 +4100,7 @@ export const generatedSchema = {
     isContentNode: { __type: "Boolean!" },
     isPreview: { __type: "Boolean" },
     isRestricted: { __type: "Boolean" },
+    isRevision: { __type: "Boolean" },
     isTermNode: { __type: "Boolean!" },
     lastEditedBy: { __type: "ContentNodeToEditLastConnectionEdge" },
     link: { __type: "String" },
@@ -4062,6 +4109,17 @@ export const generatedSchema = {
     preview: { __type: "BookToPreviewConnectionEdge" },
     previewRevisionDatabaseId: { __type: "Int" },
     previewRevisionId: { __type: "ID" },
+    revisionOf: { __type: "NodeWithRevisionsToContentNodeConnectionEdge" },
+    revisions: {
+      __type: "BookToRevisionConnection",
+      __args: {
+        first: "Int",
+        last: "Int",
+        after: "String",
+        before: "String",
+        where: "BookToRevisionConnectionWhereArgs",
+      },
+    },
     slug: { __type: "String" },
     status: { __type: "String" },
     template: { __type: "ContentTemplate" },
@@ -6334,6 +6392,40 @@ export const generatedSchema = {
     __typename: { __type: "String!" },
     node: { __type: "Book" },
   },
+  BookToRevisionConnectionWhereArgs: {
+    author: { __type: "Int" },
+    authorIn: { __type: "[ID]" },
+    authorName: { __type: "String" },
+    authorNotIn: { __type: "[ID]" },
+    dateQuery: { __type: "DateQueryInput" },
+    hasPassword: { __type: "Boolean" },
+    id: { __type: "Int" },
+    in: { __type: "[ID]" },
+    mimeType: { __type: "MimeTypeEnum" },
+    name: { __type: "String" },
+    nameIn: { __type: "[String]" },
+    notIn: { __type: "[ID]" },
+    orderby: { __type: "[PostObjectsConnectionOrderbyInput]" },
+    parent: { __type: "ID" },
+    parentIn: { __type: "[ID]" },
+    parentNotIn: { __type: "[ID]" },
+    password: { __type: "String" },
+    search: { __type: "String" },
+    stati: { __type: "[PostStatusEnum]" },
+    status: { __type: "PostStatusEnum" },
+    title: { __type: "String" },
+  },
+  BookToRevisionConnection: {
+    __typename: { __type: "String!" },
+    edges: { __type: "[BookToRevisionConnectionEdge]" },
+    nodes: { __type: "[Book]" },
+    pageInfo: { __type: "WPPageInfo" },
+  },
+  BookToRevisionConnectionEdge: {
+    __typename: { __type: "String!" },
+    cursor: { __type: "String" },
+    node: { __type: "Book" },
+  },
   RootQueryToBookConnectionWhereArgs: {
     author: { __type: "Int" },
     authorIn: { __type: "[ID]" },
@@ -7696,7 +7788,7 @@ export const generatedSchema = {
     templateName: { __type: "String" },
   },
   [SchemaUnionsKey]: {
-    ContentRevisionUnion: ["Post", "Page"],
+    ContentRevisionUnion: ["Post", "Page", "Book"],
     MenuItemObjectUnion: [
       "Post",
       "Page",
@@ -8137,6 +8229,7 @@ export interface Book
     Omit<NodeWithAuthor, "__typename">,
     Omit<NodeWithFeaturedImage, "__typename">,
     Omit<NodeWithExcerpt, "__typename">,
+    Omit<NodeWithRevisions, "__typename">,
     Omit<MenuItemLinkable, "__typename"> {
   __typename?: "Book";
   /**
@@ -8278,6 +8371,10 @@ export interface Book
    */
   isRestricted?: Maybe<ScalarsEnums["Boolean"]>;
   /**
+   * True if the node is a revision of another node
+   */
+  isRevision?: Maybe<ScalarsEnums["Boolean"]>;
+  /**
    * Whether the node is a Term
    */
   isTermNode: ScalarsEnums["Boolean"];
@@ -8309,6 +8406,35 @@ export interface Book
    * Whether the object is a node in the preview state
    */
   previewRevisionId?: Maybe<ScalarsEnums["ID"]>;
+  /**
+   * If the current node is a revision, this field exposes the node this is a revision of. Returns null if the node is not a revision of another node.
+   */
+  revisionOf?: Maybe<NodeWithRevisionsToContentNodeConnectionEdge>;
+  /**
+   * Connection between the book type and the book type
+   */
+  revisions: (args?: {
+    /**
+     * The number of items to return after the referenced "after" cursor
+     */
+    first?: Maybe<Scalars["Int"]>
+    /**
+     * The number of items to return before the referenced "before" cursor
+     */;
+    last?: Maybe<Scalars["Int"]>
+    /**
+     * Cursor used along with the "first" argument to reference where in the dataset to get data
+     */;
+    after?: Maybe<Scalars["String"]>
+    /**
+     * Cursor used along with the "last" argument to reference where in the dataset to get data
+     */;
+    before?: Maybe<Scalars["String"]>
+    /**
+     * Arguments for filtering the connection
+     */;
+    where?: Maybe<BookToRevisionConnectionWhereArgs>;
+  }) => Maybe<BookToRevisionConnection>;
   /**
    * The uri slug for the post. This is equivalent to the WP_Post-&gt;post_name field and the post_name column in the database for the &quot;post_objects&quot; table.
    */
@@ -13402,6 +13528,40 @@ export interface BookToPreviewConnectionEdge {
 }
 
 /**
+ * Connection between the book type and the book type
+ */
+export interface BookToRevisionConnection {
+  __typename?: "BookToRevisionConnection";
+  /**
+   * Edges for the bookToRevisionConnection connection
+   */
+  edges?: Maybe<Array<Maybe<BookToRevisionConnectionEdge>>>;
+  /**
+   * The nodes of the connection, without the edges
+   */
+  nodes?: Maybe<Array<Maybe<Book>>>;
+  /**
+   * Information about pagination in a connection.
+   */
+  pageInfo?: Maybe<WPPageInfo>;
+}
+
+/**
+ * An edge in a connection
+ */
+export interface BookToRevisionConnectionEdge {
+  __typename?: "BookToRevisionConnectionEdge";
+  /**
+   * A cursor for use in pagination
+   */
+  cursor?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The item at the end of the edge
+   */
+  node?: Maybe<Book>;
+}
+
+/**
  * Connection between the RootQuery type and the book type
  */
 export interface RootQueryToBookConnection {
@@ -15616,6 +15776,8 @@ export interface SchemaObjectTypes {
   UserToUserRoleConnectionEdge: UserToUserRoleConnectionEdge;
   UserRole: UserRole;
   BookToPreviewConnectionEdge: BookToPreviewConnectionEdge;
+  BookToRevisionConnection: BookToRevisionConnection;
+  BookToRevisionConnectionEdge: BookToRevisionConnectionEdge;
   RootQueryToBookConnection: RootQueryToBookConnection;
   RootQueryToBookConnectionEdge: RootQueryToBookConnectionEdge;
   RootQueryToCategoryConnection: RootQueryToCategoryConnection;
@@ -15853,6 +16015,8 @@ export type SchemaObjectTypesNames =
   | "UserToUserRoleConnectionEdge"
   | "UserRole"
   | "BookToPreviewConnectionEdge"
+  | "BookToRevisionConnection"
+  | "BookToRevisionConnectionEdge"
   | "RootQueryToBookConnection"
   | "RootQueryToBookConnectionEdge"
   | "RootQueryToCategoryConnection"
@@ -15973,6 +16137,7 @@ export type ContentRevisionUnion =
        * The globally unique identifier of the author of the node
        */
       authorId?: Maybe<ScalarsEnums["ID"]>;
+      bookId?: undefined;
       /**
        * Connection between the post type and the category type
        */
@@ -16388,6 +16553,7 @@ export type ContentRevisionUnion =
        * The globally unique identifier of the author of the node
        */
       authorId?: Maybe<ScalarsEnums["ID"]>;
+      bookId?: undefined;
       categories?: undefined;
       /**
        * Connection between the HierarchicalContentNode type and the ContentNode type
@@ -16663,6 +16829,260 @@ export type ContentRevisionUnion =
          */;
         where?: Maybe<PageToRevisionConnectionWhereArgs>;
       }) => Maybe<PageToRevisionConnection>;
+      /**
+       * The uri slug for the post. This is equivalent to the WP_Post-&gt;post_name field and the post_name column in the database for the &quot;post_objects&quot; table.
+       */
+      slug?: Maybe<ScalarsEnums["String"]>;
+      /**
+       * The current status of the object
+       */
+      status?: Maybe<ScalarsEnums["String"]>;
+      tags?: undefined;
+      /**
+       * The template assigned to a node of content
+       */
+      template?: Maybe<ContentTemplate>;
+      templates?: Maybe<Array<Maybe<ScalarsEnums["String"]>>>;
+      terms?: undefined;
+      /**
+       * The title of the post. This is currently just the raw title. An amendment to support rendered title needs to be made.
+       */
+      title: (args?: {
+        /**
+         * Format of the field output
+         */
+        format?: Maybe<PostObjectFieldFormatEnum>;
+      }) => Maybe<ScalarsEnums["String"]>;
+      toPing?: undefined;
+      /**
+       * The unique resource identifier path
+       */
+      uri?: Maybe<ScalarsEnums["String"]>;
+    }
+  | {
+      __typename?: "Book";
+      ancestors?: undefined;
+      /**
+       * Connection between the NodeWithAuthor type and the User type
+       */
+      author?: Maybe<NodeWithAuthorToUserConnectionEdge>;
+      /**
+       * The database identifier of the author of the node
+       */
+      authorDatabaseId?: Maybe<ScalarsEnums["Int"]>;
+      /**
+       * The globally unique identifier of the author of the node
+       */
+      authorId?: Maybe<ScalarsEnums["ID"]>;
+      /**
+       * The id field matches the WP_Post-&gt;ID field.
+       * @deprecated Deprecated in favor of the databaseId field
+       */
+      bookId: ScalarsEnums["Int"];
+      categories?: undefined;
+      children?: undefined;
+      commentCount?: undefined;
+      commentStatus?: undefined;
+      comments?: undefined;
+      conditionalTags?: Maybe<ConditionalTags>;
+      /**
+       * The content of the post.
+       */
+      content: (args?: {
+        /**
+         * Format of the field output
+         */
+        format?: Maybe<PostObjectFieldFormatEnum>;
+      }) => Maybe<ScalarsEnums["String"]>;
+      /**
+       * Connection between the ContentNode type and the ContentType type
+       */
+      contentType?: Maybe<ContentNodeToContentTypeConnectionEdge>;
+      /**
+       * The unique resource identifier path
+       */
+      databaseId: ScalarsEnums["Int"];
+      /**
+       * Post publishing date.
+       */
+      date?: Maybe<ScalarsEnums["String"]>;
+      /**
+       * The publishing date set in GMT.
+       */
+      dateGmt?: Maybe<ScalarsEnums["String"]>;
+      /**
+       * The desired slug of the post
+       */
+      desiredSlug?: Maybe<ScalarsEnums["String"]>;
+      /**
+       * If a user has edited the node within the past 15 seconds, this will return the user that last edited. Null if the edit lock doesn&#039;t exist or is greater than 15 seconds
+       */
+      editingLockedBy?: Maybe<ContentNodeToEditLockConnectionEdge>;
+      /**
+       * The RSS enclosure for the object
+       */
+      enclosure?: Maybe<ScalarsEnums["String"]>;
+      /**
+       * Connection between the ContentNode type and the EnqueuedScript type
+       */
+      enqueuedScripts: (args?: {
+        /**
+         * The number of items to return after the referenced "after" cursor
+         */
+        first?: Maybe<Scalars["Int"]>
+        /**
+         * The number of items to return before the referenced "before" cursor
+         */;
+        last?: Maybe<Scalars["Int"]>
+        /**
+         * Cursor used along with the "first" argument to reference where in the dataset to get data
+         */;
+        after?: Maybe<Scalars["String"]>
+        /**
+         * Cursor used along with the "last" argument to reference where in the dataset to get data
+         */;
+        before?: Maybe<Scalars["String"]>;
+      }) => Maybe<ContentNodeToEnqueuedScriptConnection>;
+      /**
+       * Connection between the ContentNode type and the EnqueuedStylesheet type
+       */
+      enqueuedStylesheets: (args?: {
+        /**
+         * The number of items to return after the referenced "after" cursor
+         */
+        first?: Maybe<Scalars["Int"]>
+        /**
+         * The number of items to return before the referenced "before" cursor
+         */;
+        last?: Maybe<Scalars["Int"]>
+        /**
+         * Cursor used along with the "first" argument to reference where in the dataset to get data
+         */;
+        after?: Maybe<Scalars["String"]>
+        /**
+         * Cursor used along with the "last" argument to reference where in the dataset to get data
+         */;
+        before?: Maybe<Scalars["String"]>;
+      }) => Maybe<ContentNodeToEnqueuedStylesheetConnection>;
+      /**
+       * The excerpt of the post.
+       */
+      excerpt: (args?: {
+        /**
+         * Format of the field output
+         */
+        format?: Maybe<PostObjectFieldFormatEnum>;
+      }) => Maybe<ScalarsEnums["String"]>;
+      /**
+       * Connection between the NodeWithFeaturedImage type and the MediaItem type
+       */
+      featuredImage?: Maybe<NodeWithFeaturedImageToMediaItemConnectionEdge>;
+      /**
+       * The database identifier for the featured image node assigned to the content node
+       */
+      featuredImageDatabaseId?: Maybe<ScalarsEnums["Int"]>;
+      /**
+       * Globally unique ID of the featured image assigned to the node
+       */
+      featuredImageId?: Maybe<ScalarsEnums["ID"]>;
+      /**
+       * The global unique identifier for this post. This currently matches the value stored in WP_Post-&gt;guid and the guid column in the &quot;post_objects&quot; database table.
+       */
+      guid?: Maybe<ScalarsEnums["String"]>;
+      /**
+       * The globally unique identifier of the book object.
+       */
+      id: ScalarsEnums["ID"];
+      /**
+       * Whether the node is a Content Node
+       */
+      isContentNode: ScalarsEnums["Boolean"];
+      isFrontPage?: undefined;
+      isPostsPage?: undefined;
+      /**
+       * Whether the object is a node in the preview state
+       */
+      isPreview?: Maybe<ScalarsEnums["Boolean"]>;
+      isPrivacyPage?: undefined;
+      /**
+       * Whether the object is restricted from the current viewer
+       */
+      isRestricted?: Maybe<ScalarsEnums["Boolean"]>;
+      /**
+       * True if the node is a revision of another node
+       */
+      isRevision?: Maybe<ScalarsEnums["Boolean"]>;
+      isSticky?: undefined;
+      /**
+       * Whether the node is a Term
+       */
+      isTermNode: ScalarsEnums["Boolean"];
+      /**
+       * The user that most recently edited the node
+       */
+      lastEditedBy?: Maybe<ContentNodeToEditLastConnectionEdge>;
+      /**
+       * The permalink of the post
+       */
+      link?: Maybe<ScalarsEnums["String"]>;
+      menuOrder?: undefined;
+      /**
+       * The local modified time for a post. If a post was recently updated the modified field will change to match the corresponding time.
+       */
+      modified?: Maybe<ScalarsEnums["String"]>;
+      /**
+       * The GMT modified time for a post. If a post was recently updated the modified field will change to match the corresponding time in GMT.
+       */
+      modifiedGmt?: Maybe<ScalarsEnums["String"]>;
+      pageId?: undefined;
+      parent?: undefined;
+      parentDatabaseId?: undefined;
+      parentId?: undefined;
+      pingStatus?: undefined;
+      pinged?: undefined;
+      postFormats?: undefined;
+      postId?: undefined;
+      /**
+       * Connection between the book type and the book type
+       */
+      preview?: Maybe<BookToPreviewConnectionEdge>;
+      /**
+       * The database id of the preview node
+       */
+      previewRevisionDatabaseId?: Maybe<ScalarsEnums["Int"]>;
+      /**
+       * Whether the object is a node in the preview state
+       */
+      previewRevisionId?: Maybe<ScalarsEnums["ID"]>;
+      /**
+       * If the current node is a revision, this field exposes the node this is a revision of. Returns null if the node is not a revision of another node.
+       */
+      revisionOf?: Maybe<NodeWithRevisionsToContentNodeConnectionEdge>;
+      /**
+       * Connection between the book type and the book type
+       */
+      revisions: (args?: {
+        /**
+         * The number of items to return after the referenced "after" cursor
+         */
+        first?: Maybe<Scalars["Int"]>
+        /**
+         * The number of items to return before the referenced "before" cursor
+         */;
+        last?: Maybe<Scalars["Int"]>
+        /**
+         * Cursor used along with the "first" argument to reference where in the dataset to get data
+         */;
+        after?: Maybe<Scalars["String"]>
+        /**
+         * Cursor used along with the "last" argument to reference where in the dataset to get data
+         */;
+        before?: Maybe<Scalars["String"]>
+        /**
+         * Arguments for filtering the connection
+         */;
+        where?: Maybe<BookToRevisionConnectionWhereArgs>;
+      }) => Maybe<BookToRevisionConnection>;
       /**
        * The uri slug for the post. This is equivalent to the WP_Post-&gt;post_name field and the post_name column in the database for the &quot;post_objects&quot; table.
        */
@@ -17609,7 +18029,10 @@ export type MenuItemObjectUnion =
        * Whether the object is restricted from the current viewer
        */
       isRestricted?: Maybe<ScalarsEnums["Boolean"]>;
-      isRevision?: undefined;
+      /**
+       * True if the node is a revision of another node
+       */
+      isRevision?: Maybe<ScalarsEnums["Boolean"]>;
       isSticky?: undefined;
       /**
        * Whether the node is a Term
@@ -17655,8 +18078,35 @@ export type MenuItemObjectUnion =
        * Whether the object is a node in the preview state
        */
       previewRevisionId?: Maybe<ScalarsEnums["ID"]>;
-      revisionOf?: undefined;
-      revisions?: undefined;
+      /**
+       * If the current node is a revision, this field exposes the node this is a revision of. Returns null if the node is not a revision of another node.
+       */
+      revisionOf?: Maybe<NodeWithRevisionsToContentNodeConnectionEdge>;
+      /**
+       * Connection between the book type and the book type
+       */
+      revisions: (args?: {
+        /**
+         * The number of items to return after the referenced "after" cursor
+         */
+        first?: Maybe<Scalars["Int"]>
+        /**
+         * The number of items to return before the referenced "before" cursor
+         */;
+        last?: Maybe<Scalars["Int"]>
+        /**
+         * Cursor used along with the "first" argument to reference where in the dataset to get data
+         */;
+        after?: Maybe<Scalars["String"]>
+        /**
+         * Cursor used along with the "last" argument to reference where in the dataset to get data
+         */;
+        before?: Maybe<Scalars["String"]>
+        /**
+         * Arguments for filtering the connection
+         */;
+        where?: Maybe<BookToRevisionConnectionWhereArgs>;
+      }) => Maybe<BookToRevisionConnection>;
       /**
        * The uri slug for the post. This is equivalent to the WP_Post-&gt;post_name field and the post_name column in the database for the &quot;post_objects&quot; table.
        */
