@@ -4,6 +4,8 @@
 	"testsPort": 4001,
 	"plugins": [
 		"https://downloads.wordpress.org/plugin/wp-graphql.zip",
+		"wp-graphql/wp-graphql-tax-query",
+		"pristas-peter/wp-graphql-gutenberg",
 		"./plugins/wpe-headless",
 		"./plugins/atlas-content-modeler"
 	],
