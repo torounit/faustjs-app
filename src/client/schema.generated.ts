@@ -407,6 +407,52 @@ export enum AvatarRatingEnum {
   X = "X",
 }
 
+/** Arguments for filtering the UserToBookConnection connection */
+export interface UserToBookConnectionWhereArgs {
+  /** The user that's connected as the author of the object. Use the userId for the author object. */
+  author?: Maybe<Scalars["Int"]>;
+  /** Find objects connected to author(s) in the array of author's userIds */
+  authorIn?: Maybe<Array<Maybe<Scalars["ID"]>>>;
+  /** Find objects connected to the author by the author's nicename */
+  authorName?: Maybe<Scalars["String"]>;
+  /** Find objects NOT connected to author(s) in the array of author's userIds */
+  authorNotIn?: Maybe<Array<Maybe<Scalars["ID"]>>>;
+  /** Filter the connection based on dates */
+  dateQuery?: Maybe<DateQueryInput>;
+  /** True for objects with passwords; False for objects without passwords; null for all objects with or without passwords */
+  hasPassword?: Maybe<Scalars["Boolean"]>;
+  /** Specific ID of the object */
+  id?: Maybe<Scalars["Int"]>;
+  /** Array of IDs for the objects to retrieve */
+  in?: Maybe<Array<Maybe<Scalars["ID"]>>>;
+  /** Get objects with a specific mimeType property */
+  mimeType?: Maybe<MimeTypeEnum>;
+  /** Slug / post_name of the object */
+  name?: Maybe<Scalars["String"]>;
+  /** Specify objects to retrieve. Use slugs */
+  nameIn?: Maybe<Array<Maybe<Scalars["String"]>>>;
+  /** Specify IDs NOT to retrieve. If this is used in the same query as "in", it will be ignored */
+  notIn?: Maybe<Array<Maybe<Scalars["ID"]>>>;
+  /** What paramater to use to order the objects by. */
+  orderby?: Maybe<Array<Maybe<PostObjectsConnectionOrderbyInput>>>;
+  /** Use ID to return only children. Use 0 to return only top-level items */
+  parent?: Maybe<Scalars["ID"]>;
+  /** Specify objects whose parent is in an array */
+  parentIn?: Maybe<Array<Maybe<Scalars["ID"]>>>;
+  /** Specify posts whose parent is not in an array */
+  parentNotIn?: Maybe<Array<Maybe<Scalars["ID"]>>>;
+  /** Show posts with a specific password. */
+  password?: Maybe<Scalars["String"]>;
+  /** Show Posts based on a keyword search */
+  search?: Maybe<Scalars["String"]>;
+  /** Retrieve posts where post status is in an array. */
+  stati?: Maybe<Array<Maybe<PostStatusEnum>>>;
+  /** Show posts with a specific status. */
+  status?: Maybe<PostStatusEnum>;
+  /** Title of the object */
+  title?: Maybe<Scalars["String"]>;
+}
+
 /** Arguments for filtering the UserToCommentConnection connection */
 export interface UserToCommentConnectionWhereArgs {
   /** Comment author email address. */
@@ -1819,6 +1865,14 @@ export interface UserToContentRevisionUnionConnectionWhereArgs {
 
 /** Arguments for filtering the RootQueryToBookConnection connection */
 export interface RootQueryToBookConnectionWhereArgs {
+  /** The user that's connected as the author of the object. Use the userId for the author object. */
+  author?: Maybe<Scalars["Int"]>;
+  /** Find objects connected to author(s) in the array of author's userIds */
+  authorIn?: Maybe<Array<Maybe<Scalars["ID"]>>>;
+  /** Find objects connected to the author by the author's nicename */
+  authorName?: Maybe<Scalars["String"]>;
+  /** Find objects NOT connected to author(s) in the array of author's userIds */
+  authorNotIn?: Maybe<Array<Maybe<Scalars["ID"]>>>;
   /** Filter the connection based on dates */
   dateQuery?: Maybe<DateQueryInput>;
   /** True for objects with passwords; False for objects without passwords; null for all objects with or without passwords */
@@ -2681,12 +2735,16 @@ export enum UsersConnectionSearchColumnEnum {
 
 /** Input for the createBook mutation */
 export interface CreateBookInput {
+  /** The userId to assign as the author of the object */
+  authorId?: Maybe<Scalars["ID"]>;
   /** This is an ID that can be passed to a mutation by the client to track the progress of mutations and catch possible duplicate mutation submissions. */
   clientMutationId?: Maybe<Scalars["String"]>;
   /** The content of the object */
   content?: Maybe<Scalars["String"]>;
   /** The date of the object. Preferable to enter as year/month/day (e.g. 01/31/2017) as it will rearrange date as fit if it is not specified. Incomplete dates may have unintended results for example, "2017" as the input will use current date with timestamp 20:17  */
   date?: Maybe<Scalars["String"]>;
+  /** The excerpt of the object */
+  excerpt?: Maybe<Scalars["String"]>;
   /** A field used for ordering posts. This is typically used with nav menu items or for special ordering of hierarchical content types. */
   menuOrder?: Maybe<Scalars["Int"]>;
   /** The password used to protect the content of the object */
@@ -3167,12 +3225,16 @@ export interface SendPasswordResetEmailInput {
 
 /** Input for the updateBook mutation */
 export interface UpdateBookInput {
+  /** The userId to assign as the author of the object */
+  authorId?: Maybe<Scalars["ID"]>;
   /** This is an ID that can be passed to a mutation by the client to track the progress of mutations and catch possible duplicate mutation submissions. */
   clientMutationId?: Maybe<Scalars["String"]>;
   /** The content of the object */
   content?: Maybe<Scalars["String"]>;
   /** The date of the object. Preferable to enter as year/month/day (e.g. 01/31/2017) as it will rearrange date as fit if it is not specified. Incomplete dates may have unintended results for example, "2017" as the input will use current date with timestamp 20:17  */
   date?: Maybe<Scalars["String"]>;
+  /** The excerpt of the object */
+  excerpt?: Maybe<Scalars["String"]>;
   /** The ID of the book object */
   id: Scalars["ID"];
   /** A field used for ordering posts. This is typically used with nav menu items or for special ordering of hierarchical content types. */
@@ -3956,6 +4018,9 @@ export const generatedSchema = {
   },
   Book: {
     __typename: { __type: "String!" },
+    author: { __type: "NodeWithAuthorToUserConnectionEdge" },
+    authorDatabaseId: { __type: "Int" },
+    authorId: { __type: "ID" },
     bookId: { __type: "Int!" },
     conditionalTags: { __type: "ConditionalTags" },
     content: {
@@ -3977,6 +4042,13 @@ export const generatedSchema = {
       __type: "ContentNodeToEnqueuedStylesheetConnection",
       __args: { first: "Int", last: "Int", after: "String", before: "String" },
     },
+    excerpt: {
+      __type: "String",
+      __args: { format: "PostObjectFieldFormatEnum" },
+    },
+    featuredImage: { __type: "NodeWithFeaturedImageToMediaItemConnectionEdge" },
+    featuredImageDatabaseId: { __type: "Int" },
+    featuredImageId: { __type: "ID" },
     guid: { __type: "String" },
     id: { __type: "ID!" },
     isContentNode: { __type: "Boolean!" },
@@ -4277,6 +4349,16 @@ export const generatedSchema = {
         rating: "AvatarRatingEnum",
       },
     },
+    books: {
+      __type: "UserToBookConnection",
+      __args: {
+        first: "Int",
+        last: "Int",
+        after: "String",
+        before: "String",
+        where: "UserToBookConnectionWhereArgs",
+      },
+    },
     capKey: { __type: "String" },
     capabilities: { __type: "[String]" },
     comments: {
@@ -4390,6 +4472,40 @@ export const generatedSchema = {
     size: { __type: "Int" },
     url: { __type: "String" },
     width: { __type: "Int" },
+  },
+  UserToBookConnectionWhereArgs: {
+    author: { __type: "Int" },
+    authorIn: { __type: "[ID]" },
+    authorName: { __type: "String" },
+    authorNotIn: { __type: "[ID]" },
+    dateQuery: { __type: "DateQueryInput" },
+    hasPassword: { __type: "Boolean" },
+    id: { __type: "Int" },
+    in: { __type: "[ID]" },
+    mimeType: { __type: "MimeTypeEnum" },
+    name: { __type: "String" },
+    nameIn: { __type: "[String]" },
+    notIn: { __type: "[ID]" },
+    orderby: { __type: "[PostObjectsConnectionOrderbyInput]" },
+    parent: { __type: "ID" },
+    parentIn: { __type: "[ID]" },
+    parentNotIn: { __type: "[ID]" },
+    password: { __type: "String" },
+    search: { __type: "String" },
+    stati: { __type: "[PostStatusEnum]" },
+    status: { __type: "PostStatusEnum" },
+    title: { __type: "String" },
+  },
+  UserToBookConnection: {
+    __typename: { __type: "String!" },
+    edges: { __type: "[UserToBookConnectionEdge]" },
+    nodes: { __type: "[Book]" },
+    pageInfo: { __type: "WPPageInfo" },
+  },
+  UserToBookConnectionEdge: {
+    __typename: { __type: "String!" },
+    cursor: { __type: "String" },
+    node: { __type: "Book" },
   },
   UserToCommentConnectionWhereArgs: {
     authorEmail: { __type: "String" },
@@ -6219,6 +6335,10 @@ export const generatedSchema = {
     node: { __type: "Book" },
   },
   RootQueryToBookConnectionWhereArgs: {
+    author: { __type: "Int" },
+    authorIn: { __type: "[ID]" },
+    authorName: { __type: "String" },
+    authorNotIn: { __type: "[ID]" },
     dateQuery: { __type: "DateQueryInput" },
     hasPassword: { __type: "Boolean" },
     id: { __type: "Int" },
@@ -6976,9 +7096,11 @@ export const generatedSchema = {
     useSmilies: { __type: "Boolean" },
   },
   CreateBookInput: {
+    authorId: { __type: "ID" },
     clientMutationId: { __type: "String" },
     content: { __type: "String" },
     date: { __type: "String" },
+    excerpt: { __type: "String" },
     menuOrder: { __type: "Int" },
     password: { __type: "String" },
     slug: { __type: "String" },
@@ -7351,9 +7473,11 @@ export const generatedSchema = {
     user: { __type: "User" },
   },
   UpdateBookInput: {
+    authorId: { __type: "ID" },
     clientMutationId: { __type: "String" },
     content: { __type: "String" },
     date: { __type: "String" },
+    excerpt: { __type: "String" },
     id: { __type: "ID!" },
     menuOrder: { __type: "Int" },
     password: { __type: "String" },
@@ -7573,7 +7697,14 @@ export const generatedSchema = {
   },
   [SchemaUnionsKey]: {
     ContentRevisionUnion: ["Post", "Page"],
-    MenuItemObjectUnion: ["Post", "Page", "Category", "Tag", "PostFormat"],
+    MenuItemObjectUnion: [
+      "Post",
+      "Page",
+      "Book",
+      "Category",
+      "Tag",
+      "PostFormat",
+    ],
   },
 } as const;
 
@@ -8002,8 +8133,24 @@ export interface Book
     Omit<DatabaseIdentifier, "__typename">,
     Omit<NodeWithTemplate, "__typename">,
     Omit<NodeWithTitle, "__typename">,
-    Omit<NodeWithContentEditor, "__typename"> {
+    Omit<NodeWithContentEditor, "__typename">,
+    Omit<NodeWithAuthor, "__typename">,
+    Omit<NodeWithFeaturedImage, "__typename">,
+    Omit<NodeWithExcerpt, "__typename">,
+    Omit<MenuItemLinkable, "__typename"> {
   __typename?: "Book";
+  /**
+   * Connection between the NodeWithAuthor type and the User type
+   */
+  author?: Maybe<NodeWithAuthorToUserConnectionEdge>;
+  /**
+   * The database identifier of the author of the node
+   */
+  authorDatabaseId?: Maybe<ScalarsEnums["Int"]>;
+  /**
+   * The globally unique identifier of the author of the node
+   */
+  authorId?: Maybe<ScalarsEnums["ID"]>;
   /**
    * The id field matches the WP_Post-&gt;ID field.
    * @deprecated Deprecated in favor of the databaseId field
@@ -8024,7 +8171,7 @@ export interface Book
    */
   contentType?: Maybe<ContentNodeToContentTypeConnectionEdge>;
   /**
-   * The unique identifier stored in the database
+   * The unique resource identifier path
    */
   databaseId: ScalarsEnums["Int"];
   /**
@@ -8090,6 +8237,27 @@ export interface Book
     before?: Maybe<Scalars["String"]>;
   }) => Maybe<ContentNodeToEnqueuedStylesheetConnection>;
   /**
+   * The excerpt of the post.
+   */
+  excerpt: (args?: {
+    /**
+     * Format of the field output
+     */
+    format?: Maybe<PostObjectFieldFormatEnum>;
+  }) => Maybe<ScalarsEnums["String"]>;
+  /**
+   * Connection between the NodeWithFeaturedImage type and the MediaItem type
+   */
+  featuredImage?: Maybe<NodeWithFeaturedImageToMediaItemConnectionEdge>;
+  /**
+   * The database identifier for the featured image node assigned to the content node
+   */
+  featuredImageDatabaseId?: Maybe<ScalarsEnums["Int"]>;
+  /**
+   * Globally unique ID of the featured image assigned to the node
+   */
+  featuredImageId?: Maybe<ScalarsEnums["ID"]>;
+  /**
    * The global unique identifier for this post. This currently matches the value stored in WP_Post-&gt;guid and the guid column in the &quot;post_objects&quot; database table.
    */
   guid?: Maybe<ScalarsEnums["String"]>;
@@ -8150,7 +8318,7 @@ export interface Book
    */
   status?: Maybe<ScalarsEnums["String"]>;
   /**
-   * The template assigned to the node
+   * The template assigned to a node of content
    */
   template?: Maybe<ContentTemplate>;
   templates?: Maybe<Array<Maybe<ScalarsEnums["String"]>>>;
@@ -9010,6 +9178,31 @@ export interface User
     rating?: Maybe<AvatarRatingEnum>;
   }) => Maybe<Avatar>;
   /**
+   * Connection between the User type and the book type
+   */
+  books: (args?: {
+    /**
+     * The number of items to return after the referenced "after" cursor
+     */
+    first?: Maybe<Scalars["Int"]>
+    /**
+     * The number of items to return before the referenced "before" cursor
+     */;
+    last?: Maybe<Scalars["Int"]>
+    /**
+     * Cursor used along with the "first" argument to reference where in the dataset to get data
+     */;
+    after?: Maybe<Scalars["String"]>
+    /**
+     * Cursor used along with the "last" argument to reference where in the dataset to get data
+     */;
+    before?: Maybe<Scalars["String"]>
+    /**
+     * Arguments for filtering the connection
+     */;
+    where?: Maybe<UserToBookConnectionWhereArgs>;
+  }) => Maybe<UserToBookConnection>;
+  /**
    * User metadata option name. Usually it will be &quot;wp_capabilities&quot;.
    */
   capKey?: Maybe<ScalarsEnums["String"]>;
@@ -9381,6 +9574,40 @@ export interface Avatar {
    * Width of the avatar image.
    */
   width?: Maybe<ScalarsEnums["Int"]>;
+}
+
+/**
+ * Connection between the User type and the book type
+ */
+export interface UserToBookConnection {
+  __typename?: "UserToBookConnection";
+  /**
+   * Edges for the UserToBookConnection connection
+   */
+  edges?: Maybe<Array<Maybe<UserToBookConnectionEdge>>>;
+  /**
+   * The nodes of the connection, without the edges
+   */
+  nodes?: Maybe<Array<Maybe<Book>>>;
+  /**
+   * Information about pagination in a connection.
+   */
+  pageInfo?: Maybe<WPPageInfo>;
+}
+
+/**
+ * An edge in a connection
+ */
+export interface UserToBookConnectionEdge {
+  __typename?: "UserToBookConnectionEdge";
+  /**
+   * A cursor for use in pagination
+   */
+  cursor?: Maybe<ScalarsEnums["String"]>;
+  /**
+   * The item at the end of the edge
+   */
+  node?: Maybe<Book>;
 }
 
 /**
@@ -15279,6 +15506,8 @@ export interface SchemaObjectTypes {
   Commenter: Commenter;
   DatabaseIdentifier: DatabaseIdentifier;
   Avatar: Avatar;
+  UserToBookConnection: UserToBookConnection;
+  UserToBookConnectionEdge: UserToBookConnectionEdge;
   UserToCommentConnection: UserToCommentConnection;
   UserToCommentConnectionEdge: UserToCommentConnectionEdge;
   Comment: Comment;
@@ -15514,6 +15743,8 @@ export type SchemaObjectTypesNames =
   | "Commenter"
   | "DatabaseIdentifier"
   | "Avatar"
+  | "UserToBookConnection"
+  | "UserToBookConnectionEdge"
   | "UserToCommentConnection"
   | "UserToCommentConnectionEdge"
   | "Comment"
@@ -16481,6 +16712,7 @@ export type MenuItemObjectUnion =
        * The globally unique identifier of the author of the node
        */
       authorId?: Maybe<ScalarsEnums["ID"]>;
+      bookId?: undefined;
       /**
        * Connection between the post type and the category type
        */
@@ -16907,6 +17139,7 @@ export type MenuItemObjectUnion =
        * The globally unique identifier of the author of the node
        */
       authorId?: Maybe<ScalarsEnums["ID"]>;
+      bookId?: undefined;
       categories?: undefined;
       categoryId?: undefined;
       /**
@@ -17224,6 +17457,241 @@ export type MenuItemObjectUnion =
       uri?: Maybe<ScalarsEnums["String"]>;
     }
   | {
+      __typename?: "Book";
+      ancestors?: undefined;
+      /**
+       * Connection between the NodeWithAuthor type and the User type
+       */
+      author?: Maybe<NodeWithAuthorToUserConnectionEdge>;
+      /**
+       * The database identifier of the author of the node
+       */
+      authorDatabaseId?: Maybe<ScalarsEnums["Int"]>;
+      /**
+       * The globally unique identifier of the author of the node
+       */
+      authorId?: Maybe<ScalarsEnums["ID"]>;
+      /**
+       * The id field matches the WP_Post-&gt;ID field.
+       * @deprecated Deprecated in favor of the databaseId field
+       */
+      bookId: ScalarsEnums["Int"];
+      categories?: undefined;
+      categoryId?: undefined;
+      children?: undefined;
+      commentCount?: undefined;
+      commentStatus?: undefined;
+      comments?: undefined;
+      conditionalTags?: Maybe<ConditionalTags>;
+      /**
+       * The content of the post.
+       */
+      content: (args?: {
+        /**
+         * Format of the field output
+         */
+        format?: Maybe<PostObjectFieldFormatEnum>;
+      }) => Maybe<ScalarsEnums["String"]>;
+      contentNodes?: undefined;
+      /**
+       * Connection between the ContentNode type and the ContentType type
+       */
+      contentType?: Maybe<ContentNodeToContentTypeConnectionEdge>;
+      count?: undefined;
+      /**
+       * The unique resource identifier path
+       */
+      databaseId: ScalarsEnums["Int"];
+      /**
+       * Post publishing date.
+       */
+      date?: Maybe<ScalarsEnums["String"]>;
+      /**
+       * The publishing date set in GMT.
+       */
+      dateGmt?: Maybe<ScalarsEnums["String"]>;
+      description?: undefined;
+      /**
+       * The desired slug of the post
+       */
+      desiredSlug?: Maybe<ScalarsEnums["String"]>;
+      /**
+       * If a user has edited the node within the past 15 seconds, this will return the user that last edited. Null if the edit lock doesn&#039;t exist or is greater than 15 seconds
+       */
+      editingLockedBy?: Maybe<ContentNodeToEditLockConnectionEdge>;
+      /**
+       * The RSS enclosure for the object
+       */
+      enclosure?: Maybe<ScalarsEnums["String"]>;
+      /**
+       * Connection between the ContentNode type and the EnqueuedScript type
+       */
+      enqueuedScripts: (args?: {
+        /**
+         * The number of items to return after the referenced "after" cursor
+         */
+        first?: Maybe<Scalars["Int"]>
+        /**
+         * The number of items to return before the referenced "before" cursor
+         */;
+        last?: Maybe<Scalars["Int"]>
+        /**
+         * Cursor used along with the "first" argument to reference where in the dataset to get data
+         */;
+        after?: Maybe<Scalars["String"]>
+        /**
+         * Cursor used along with the "last" argument to reference where in the dataset to get data
+         */;
+        before?: Maybe<Scalars["String"]>;
+      }) => Maybe<ContentNodeToEnqueuedScriptConnection>;
+      /**
+       * Connection between the ContentNode type and the EnqueuedStylesheet type
+       */
+      enqueuedStylesheets: (args?: {
+        /**
+         * The number of items to return after the referenced "after" cursor
+         */
+        first?: Maybe<Scalars["Int"]>
+        /**
+         * The number of items to return before the referenced "before" cursor
+         */;
+        last?: Maybe<Scalars["Int"]>
+        /**
+         * Cursor used along with the "first" argument to reference where in the dataset to get data
+         */;
+        after?: Maybe<Scalars["String"]>
+        /**
+         * Cursor used along with the "last" argument to reference where in the dataset to get data
+         */;
+        before?: Maybe<Scalars["String"]>;
+      }) => Maybe<ContentNodeToEnqueuedStylesheetConnection>;
+      /**
+       * The excerpt of the post.
+       */
+      excerpt: (args?: {
+        /**
+         * Format of the field output
+         */
+        format?: Maybe<PostObjectFieldFormatEnum>;
+      }) => Maybe<ScalarsEnums["String"]>;
+      /**
+       * Connection between the NodeWithFeaturedImage type and the MediaItem type
+       */
+      featuredImage?: Maybe<NodeWithFeaturedImageToMediaItemConnectionEdge>;
+      /**
+       * The database identifier for the featured image node assigned to the content node
+       */
+      featuredImageDatabaseId?: Maybe<ScalarsEnums["Int"]>;
+      /**
+       * Globally unique ID of the featured image assigned to the node
+       */
+      featuredImageId?: Maybe<ScalarsEnums["ID"]>;
+      /**
+       * The global unique identifier for this post. This currently matches the value stored in WP_Post-&gt;guid and the guid column in the &quot;post_objects&quot; database table.
+       */
+      guid?: Maybe<ScalarsEnums["String"]>;
+      /**
+       * The globally unique identifier of the book object.
+       */
+      id: ScalarsEnums["ID"];
+      /**
+       * Whether the node is a Content Node
+       */
+      isContentNode: ScalarsEnums["Boolean"];
+      isFrontPage?: undefined;
+      isPostsPage?: undefined;
+      /**
+       * Whether the object is a node in the preview state
+       */
+      isPreview?: Maybe<ScalarsEnums["Boolean"]>;
+      isPrivacyPage?: undefined;
+      /**
+       * Whether the object is restricted from the current viewer
+       */
+      isRestricted?: Maybe<ScalarsEnums["Boolean"]>;
+      isRevision?: undefined;
+      isSticky?: undefined;
+      /**
+       * Whether the node is a Term
+       */
+      isTermNode: ScalarsEnums["Boolean"];
+      /**
+       * The user that most recently edited the node
+       */
+      lastEditedBy?: Maybe<ContentNodeToEditLastConnectionEdge>;
+      /**
+       * The permalink of the post
+       */
+      link?: Maybe<ScalarsEnums["String"]>;
+      menuOrder?: undefined;
+      /**
+       * The local modified time for a post. If a post was recently updated the modified field will change to match the corresponding time.
+       */
+      modified?: Maybe<ScalarsEnums["String"]>;
+      /**
+       * The GMT modified time for a post. If a post was recently updated the modified field will change to match the corresponding time in GMT.
+       */
+      modifiedGmt?: Maybe<ScalarsEnums["String"]>;
+      name?: undefined;
+      pageId?: undefined;
+      parent?: undefined;
+      parentDatabaseId?: undefined;
+      parentId?: undefined;
+      pingStatus?: undefined;
+      pinged?: undefined;
+      postFormatId?: undefined;
+      postFormats?: undefined;
+      postId?: undefined;
+      posts?: undefined;
+      /**
+       * Connection between the book type and the book type
+       */
+      preview?: Maybe<BookToPreviewConnectionEdge>;
+      /**
+       * The database id of the preview node
+       */
+      previewRevisionDatabaseId?: Maybe<ScalarsEnums["Int"]>;
+      /**
+       * Whether the object is a node in the preview state
+       */
+      previewRevisionId?: Maybe<ScalarsEnums["ID"]>;
+      revisionOf?: undefined;
+      revisions?: undefined;
+      /**
+       * The uri slug for the post. This is equivalent to the WP_Post-&gt;post_name field and the post_name column in the database for the &quot;post_objects&quot; table.
+       */
+      slug?: Maybe<ScalarsEnums["String"]>;
+      /**
+       * The current status of the object
+       */
+      status?: Maybe<ScalarsEnums["String"]>;
+      tagId?: undefined;
+      tags?: undefined;
+      taxonomy?: undefined;
+      /**
+       * The template assigned to a node of content
+       */
+      template?: Maybe<ContentTemplate>;
+      templates?: Maybe<Array<Maybe<ScalarsEnums["String"]>>>;
+      termGroupId?: undefined;
+      termTaxonomyId?: undefined;
+      terms?: undefined;
+      /**
+       * The title of the post. This is currently just the raw title. An amendment to support rendered title needs to be made.
+       */
+      title: (args?: {
+        /**
+         * Format of the field output
+         */
+        format?: Maybe<PostObjectFieldFormatEnum>;
+      }) => Maybe<ScalarsEnums["String"]>;
+      toPing?: undefined;
+      /**
+       * The unique resource identifier path
+       */
+      uri?: Maybe<ScalarsEnums["String"]>;
+    }
+  | {
       __typename?: "Category";
       /**
        * The ancestors of the node. Default ordered as lowest (closest to the child) to highest (closest to the root).
@@ -17249,6 +17717,7 @@ export type MenuItemObjectUnion =
       author?: undefined;
       authorDatabaseId?: undefined;
       authorId?: undefined;
+      bookId?: undefined;
       categories?: undefined;
       /**
        * The id field matches the WP_Post-&gt;ID field.
@@ -17492,6 +17961,7 @@ export type MenuItemObjectUnion =
       author?: undefined;
       authorDatabaseId?: undefined;
       authorId?: undefined;
+      bookId?: undefined;
       categories?: undefined;
       categoryId?: undefined;
       children?: undefined;
@@ -17702,6 +18172,7 @@ export type MenuItemObjectUnion =
       author?: undefined;
       authorDatabaseId?: undefined;
       authorId?: undefined;
+      bookId?: undefined;
       categories?: undefined;
       categoryId?: undefined;
       children?: undefined;
