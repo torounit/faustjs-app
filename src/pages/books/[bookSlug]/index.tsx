@@ -8,13 +8,6 @@ import { useRouter } from 'next/router';
 import { Node, WithRevisions } from '@faustjs/react/dist/cjs/client';
 import { RequiredQuery } from '@faustjs/react/dist/mjs';
 
-export interface ExtendedRequiredQuery extends RequiredQuery {
-  book: (args: {
-    id: string;
-    idType?: BookIdType;
-  }) => (Node & WithRevisions) | null | undefined;
-
-}
 
 export interface BookProps {
   book: Book | Book['preview']['node'] | null | undefined;
@@ -66,6 +59,14 @@ export default function Page() {
   return <BookComponent book={post}/>;
 }
 
+
+export interface ExtendedRequiredQuery extends RequiredQuery {
+  book: (args: {
+    id: string;
+    idType?: BookIdType;
+  }) => (Node & WithRevisions) | null | undefined;
+}
+
 async function is404Book<Context extends GetStaticPropsContext | GetServerSidePropsContext,
   >({ params }: Context, { client }: Is404Config): Promise<boolean> {
   if (!params) {
@@ -80,12 +81,11 @@ async function is404Book<Context extends GetStaticPropsContext | GetServerSidePr
 
   try {
     result = inlineResolved(
-      () => {
-        return query.book({
+      () =>
+        query.book({
           id: params.bookSlug as string,
           idType: BookIdType.SLUG,
-        })?.id;
-      },
+        })?.id,
       { refetch: true },
     );
   }
