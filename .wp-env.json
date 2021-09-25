@@ -5,6 +5,7 @@
 	"plugins": [
 		"https://downloads.wordpress.org/plugin/wp-graphql.zip",
 		"wp-graphql/wp-graphql-tax-query",
+		"pristas-peter/wp-graphql-gutenberg#v0.3.11",
 		"./plugins/wpe-headless",
 		"./plugins/atlas-content-modeler"
 	],
